@@ -1,0 +1,50 @@
+---
+title: "CP in last frame = Happy Ending?"
+output:
+  pdf_document: default
+  html_document: default
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r lib, echo=FALSE}
+library(ggplot2)
+```
+This is a bullshit analysis to test the hypothesis "If the main couple is shown together in the last frame of the ending song, then there will be a happy ending".
+Classification of "happy ending" and "couple in last frame" is in unscientific and totally biased fashion done by myself.
+```{r, echo=FALSE}
+d<-read.csv(file = "th20220611_cdrama_ED.csv",header=T,sep=";")
+n<-nrow(d)
+paste("number of dramas in dataset:",n)
+```
+```{r, echo=FALSE}
+table(d$HE)
+table(d$CP_lastframe)
+m<-as.matrix(table(d$CP_lastframe,d$HE))
+#m
+paste("dramas with happy ending:",round((sum(m[,2])/sum(m)*100),digits=2),"%")
+paste("dramas with CP in last frame:",round((sum(m[2,])/sum(m)*100),digits=2),"%")
+paste("Of dramas with CP not in last frame,",round((m[1,2]/sum(m[1,])*100),digits=2),"% have a happy ending")
+paste("Of dramas with CP in last frame,",round((m[2,2]/sum(m[2,])*100),digits=2),"% have a happy ending")
+fisher.test(m)
+```
+```{r, fig.height=3,fig.width=4, echo=FALSE}
+ggplot(d,aes(x=HE,fill=CP_lastframe))+
+  geom_bar()+
+  ggtitle(paste("n=",n,"dramas"))+
+  scale_x_discrete(name = "Ending", labels = c("Bad","Good"))+
+  scale_fill_discrete(name = "CP in last frame", labels = c("No","Yes"))
+```
+
+
+```{r, fig.height=3,fig.width=4, echo=FALSE}
+ggplot(d,aes(x=CP_lastframe,fill=HE))+
+  geom_bar()+
+  ggtitle(paste("n=",n,"dramas"))+
+  scale_x_discrete(name = "CP in last frame", labels = c("No","Yes"))+
+  scale_fill_discrete(name = "Ending", labels = c("Bad","Good"))
+```
+
